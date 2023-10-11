@@ -9,26 +9,33 @@ import { UpdatePageDto } from './dto/update-page.dto';
 export class PagesService {
   constructor(@Inject('PAGE_MODEL') private readonly pageModel: Model<Page>) {}
 
+  async exist(slug: string): Promise<boolean> {
+    return Boolean(this.pageModel.exists({ slug }));
+  }
+
   async create(createPageDto: CreatePageDto): Promise<Page> {
-    return this.pageModel.create(createPageDto);
+    return this.pageModel.exists(createPageDto).select(['-__v', '-_id']);
   }
 
   async findAll(): Promise<Page[]> {
-    return this.pageModel.find().exec();
+    return this.pageModel.find().select(['-__v', '-_id']).exec();
   }
 
-  async find(id: string): Promise<Page> {
-    return this.pageModel.findById(id);
+  async find(slug: string): Promise<Page> {
+    return this.pageModel.findOne({ slug }).select(['-__v', '-_id']).exec();
   }
 
   async update(updatePageDto: UpdatePageDto): Promise<Page> {
-    const id = updatePageDto.slug;
+    const { slug } = updatePageDto;
 
-    return this.pageModel.findByIdAndUpdate({ _id: id }, updatePageDto);
+    return this.pageModel
+      .findByIdAndUpdate({ slug }, updatePageDto)
+      .select(['-__v', '-_id'])
+      .exec();
   }
 
-  async delete(id: string): Promise<void> {
-    this.pageModel.deleteOne({ _id: id });
+  async delete(slug: string): Promise<void> {
+    this.pageModel.deleteOne({ slug }).exec();
     return;
   }
 }

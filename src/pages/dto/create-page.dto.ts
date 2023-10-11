@@ -1,4 +1,10 @@
-import { IsString, IsArray, ValidateNested, IsObject } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  ArrayMinSize,
+  ValidateNested,
+  IsObject,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreatePageDto {
@@ -6,6 +12,7 @@ export class CreatePageDto {
   slug: string;
 
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => PageSectionData)
   pageSectionsData: PageSectionData[];

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 
 import { PagesService } from './pages.service';
 import { CreatePageDto } from './dto/create-page.dto';
@@ -16,5 +16,15 @@ export class PagesController {
   @Get()
   async findAll(): Promise<Page[]> {
     return this.pagesService.findAll();
+  }
+
+  @Get(':slug')
+  async find(@Param('slug') slug: string): Promise<Page> {
+    return this.pagesService.find(slug);
+  }
+
+  @Get('exist/:slug')
+  async exist(@Param('slug') slug: string): Promise<boolean> {
+    return this.pagesService.exist(slug);
   }
 }

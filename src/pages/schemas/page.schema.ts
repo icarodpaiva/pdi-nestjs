@@ -1,7 +1,6 @@
 import { Schema } from 'mongoose';
 
 export const PageSchema = new Schema({
-  _id: { type: String, required: true, unique: true },
   slug: { type: String, required: true, unique: true },
   pageSectionsData: [
     {
