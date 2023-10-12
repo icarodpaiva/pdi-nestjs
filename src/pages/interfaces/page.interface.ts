@@ -2,10 +2,10 @@ import { Document } from 'mongoose';
 
 export interface Page extends Document {
   readonly slug: string;
-  readonly pageSectionsData: PageSectionData[];
+  readonly sections: Section[];
 }
 
-interface PageSectionData {
-  readonly pageSection: string;
+interface Section {
+  readonly section: string;
   readonly formData: object;
 }
