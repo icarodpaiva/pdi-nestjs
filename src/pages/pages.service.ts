@@ -26,6 +26,7 @@ export class PagesService {
           `Page '${createDto.slug}' already exists`,
         );
       }
+
       console.error('Error at pages.service.ts: create()', error);
       throw new BadRequestException(
         `Failed to create '${createDto.slug}' page`,
