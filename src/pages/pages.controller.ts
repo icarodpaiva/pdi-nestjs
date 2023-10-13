@@ -15,6 +15,14 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { DeleteManyDto } from './dto/delete-many.dto';
 
+@Controller()
+export class TestController {
+  @Get()
+  test(): string {
+    return 'hello world';
+  }
+}
+
 @Controller('pages')
 export class PagesController {
   constructor(private readonly pagesService: PagesService) {}
