@@ -35,14 +35,14 @@ export class PagesService {
     }
   }
 
-  async findAll(): Promise<Page[]> {
-    const pages = await this.pageModel.find();
+  async findAll(): Promise<{ slug: string }[]> {
+    const slugs = await this.pageModel.find().select('slug');
 
-    if (!pages || pages.length === 0) {
+    if (!slugs || slugs.length === 0) {
       throw new NotFoundException('No pages found');
     }
 
-    return pages;
+    return slugs;
   }
 
   async find(slug: string): Promise<Page> {

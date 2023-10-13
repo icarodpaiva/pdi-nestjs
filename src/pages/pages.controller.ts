@@ -29,7 +29,7 @@ export class PagesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(): Promise<Page[]> {
+  async findAll(): Promise<{ slug: string }[]> {
     return this.pagesService.findAll();
   }
 
