@@ -2,6 +2,7 @@ import {
   Inject,
   Injectable,
   BadRequestException,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Model } from 'mongoose';
@@ -16,10 +17,10 @@ import { DeleteManyDto } from './dto/delete-many.dto';
 export class PagesService {
   constructor(@Inject('PAGE_MODEL') private readonly pageModel: Model<Page>) {}
 
-  async create(createDto: CreateDto): Promise<Page> {
+  async create(createDto: CreateDto): Promise<void> {
     try {
       const page = new this.pageModel(createDto);
-      return await page.save();
+      await page.save();
     } catch (error) {
       if (error.code === 11000) {
         throw new BadRequestException(
@@ -28,7 +29,7 @@ export class PagesService {
       }
 
       console.error('Error at pages.service.ts: create()', error);
-      throw new BadRequestException(
+      throw new InternalServerErrorException(
         `Failed to create '${createDto.slug}' page`,
       );
     }
@@ -54,7 +55,7 @@ export class PagesService {
     return page;
   }
 
-  async update(slug: string, updateDto: UpdateDto): Promise<Page> {
+  async update(slug: string, updateDto: UpdateDto): Promise<void> {
     const page = await this.pageModel.findOneAndUpdate({ slug }, updateDto, {
       new: true,
     });
@@ -62,29 +63,25 @@ export class PagesService {
     if (!page) {
       throw new NotFoundException(`Page '${slug}' not found`);
     }
-
-    return page;
   }
 
-  async delete(slug: string): Promise<Page> {
+  async delete(slug: string): Promise<void> {
     const page = await this.pageModel.findOneAndDelete({ slug });
 
     if (!page) {
       throw new NotFoundException(`Page '${slug}' not found`);
     }
-
-    return page;
   }
 
-  async deleteMany(deleteManyDto: DeleteManyDto): Promise<number> {
-    const deleteResult = await this.pageModel.deleteMany({
+  async deleteMany(deleteManyDto: DeleteManyDto): Promise<string> {
+    const { deletedCount } = await this.pageModel.deleteMany({
       slug: deleteManyDto.slugs,
     });
 
-    if (deleteResult.deletedCount === 0) {
+    if (deletedCount === 0) {
       throw new NotFoundException('No pages found for the provided slugs');
     }
 
-    return deleteResult.deletedCount;
+    return `${deletedCount} page(s) deleted`;
   }
 }

@@ -4,6 +4,8 @@ import {
   Get,
   Put,
   Delete,
+  HttpCode,
+  HttpStatus,
   Body,
   Param,
 } from '@nestjs/common';
@@ -20,35 +22,41 @@ export class PagesController {
   constructor(private readonly pagesService: PagesService) {}
 
   @Post()
-  async create(@Body() createDto: CreateDto): Promise<Page> {
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createDto: CreateDto): Promise<void> {
     return this.pagesService.create(createDto);
   }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findAll(): Promise<Page[]> {
     return this.pagesService.findAll();
   }
 
   @Get(':slug')
+  @HttpCode(HttpStatus.OK)
   async find(@Param('slug') slug: string): Promise<Page> {
     return this.pagesService.find(slug);
   }
 
   @Put(':slug')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('slug') slug: string,
     @Body() updateDto: UpdateDto,
-  ): Promise<Page> {
+  ): Promise<void> {
     return this.pagesService.update(slug, updateDto);
   }
 
   @Delete(':slug')
-  async delete(@Param('slug') slug: string): Promise<Page> {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('slug') slug: string): Promise<void> {
     return this.pagesService.delete(slug);
   }
 
   @Delete()
-  async deleteMany(@Body() deleteManyDto: DeleteManyDto): Promise<number> {
+  @HttpCode(HttpStatus.OK)
+  async deleteMany(@Body() deleteManyDto: DeleteManyDto): Promise<string> {
     return this.pagesService.deleteMany(deleteManyDto);
   }
 }
