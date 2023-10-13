@@ -30,7 +30,7 @@ export class PagesService {
 
       console.error('Error at pages.service.ts: create()', error);
       throw new InternalServerErrorException(
-        `Failed to create '${createDto.slug}' page`,
+        `Failed creating '${createDto.slug}' page`,
       );
     }
   }
@@ -56,12 +56,28 @@ export class PagesService {
   }
 
   async update(slug: string, updateDto: UpdateDto): Promise<void> {
-    const page = await this.pageModel.findOneAndUpdate({ slug }, updateDto, {
-      new: true,
-    });
+    const page = await this.pageModel.findOne({ slug });
 
     if (!page) {
       throw new NotFoundException(`Page '${slug}' not found`);
+    }
+
+    try {
+      page.slug = updateDto.slug;
+      page.sections = updateDto.sections;
+
+      await page.save();
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new BadRequestException(
+          `Page '${updateDto.slug}' already exists`,
+        );
+      }
+
+      console.error('Error at pages.service.ts: update()', error);
+      throw new InternalServerErrorException(
+        `Failed editing '${updateDto.slug}' page`,
+      );
     }
   }
 

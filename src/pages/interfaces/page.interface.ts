@@ -1,8 +1,8 @@
 import { Document } from 'mongoose';
 
 export interface Page extends Document {
-  readonly slug: string;
-  readonly sections: Section[];
+  slug: string;
+  sections: Section[];
 }
 
 interface Section {
